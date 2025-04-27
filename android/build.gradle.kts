@@ -2,6 +2,9 @@
 
 ext {
 //    set("jvmTarget", "17")
+    set("compileSdkVersion", libs.versions.compileSdk.get().toInt())
+    set("minSdkVersion", libs.versions.minSdk.get().toInt())
+    set("targetSdkVersion", libs.versions.targetSdk.get().toInt())
     set("javaVerison", JavaVersion.VERSION_17)
 }
 

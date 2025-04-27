@@ -5,9 +5,10 @@ plugins {
     id("com.facebook.react")
 }
 
+apply(from = "${project(":react-native-config").projectDir.path}/dotenv.gradle")
 android {
     namespace = "com.ccnio.rn"
-    compileSdk = 35
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.ccnio.rn"
