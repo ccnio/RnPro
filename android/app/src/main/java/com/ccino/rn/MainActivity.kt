@@ -26,6 +26,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        binding.startRnBtn.setOnClickListener { ReactWareActivity.start(this, PAGE_RN_SECOND) }
+        binding.startRnBtn.setOnClickListener { ReactWareActivity.start(this, PAGE_RN_PRO) }
     }
 }
