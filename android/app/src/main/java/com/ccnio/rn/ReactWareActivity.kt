@@ -1,10 +1,9 @@
-package com.ccino.rn
+package com.ccnio.rn
 
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.ccnio.rn.R
 import com.ccnio.rn.databinding.ActivityReactBinding
 import com.facebook.react.ReactFragment
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler

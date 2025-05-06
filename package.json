@@ -9,6 +9,14 @@
     "start": "react-native start",
     "test": "jest"
   },
+  "codegenConfig": {
+    "name": "NativeRouterSpec",
+    "type": "modules",
+    "jsSrcsDir": "specs",
+    "android": {
+      "javaPackageName": "com.ccnio.rn.spec"
+    }
+  },
   "dependencies": {
     "@react-navigation/native": "^7.1.6",
     "@react-navigation/stack": "^7.2.10",

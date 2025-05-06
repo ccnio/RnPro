@@ -1,7 +1,7 @@
-package com.ccino.rn
+package com.ccnio.rn
 
 import android.app.Application
-import com.ccnio.rn.BuildConfig
+import com.ccnio.rn.spec.RnRouterPackage
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
@@ -20,7 +20,7 @@ class RnApp : Application(), ReactApplication {
             override fun getPackages(): List<ReactPackage> =
                 PackageList(this).packages.apply {
                     // Packages that cannot be autolinked yet can be added manually here, for example:
-                    // add(MyReactNativePackage())
+                    add(RnRouterPackage())
                 }
 
             override fun getJSMainModuleName(): String = "index"

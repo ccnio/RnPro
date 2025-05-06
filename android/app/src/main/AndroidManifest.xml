@@ -4,14 +4,14 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="com.ccino.rn.RnApp"
+        android:name="com.ccnio.rn.RnApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.ccino.rn.MainActivity"
+            android:name="com.ccnio.rn.MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
             android:exported="true"
             android:label="@string/app_name"
@@ -24,7 +24,7 @@
         </activity>
 
         <activity
-            android:name="com.ccino.rn.ReactWareActivity"
+            android:name="com.ccnio.rn.ReactWareActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode" />
     </application>
 
