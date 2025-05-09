@@ -1,44 +1,46 @@
-import React, { Component } from 'react'
-import { Text, View, Button } from 'react-native'
-import { NavigationContainer } from '@react-navigation/native'
-import { createStackNavigator } from '@react-navigation/stack'
-import SecondPage from './pages/SecondPage'
-import { StackNavigationProp } from '@react-navigation/stack'
+import React, {Component} from 'react';
+import {Text, View, Button} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {StackNavigationProp} from '@react-navigation/stack';
+import SecondPage from './pages/SecondPage';
+import {multiply} from 'react-native-rn-mul';
 
+const result = multiply(4, 5);
 type RootStackParamList = {
-    Home: undefined;
-    SecondPage: undefined;
-}
+  Home: undefined;
+  SecondPage: undefined;
+};
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
 type HomeScreenProps = {
-    navigation: HomeScreenNavigationProp;
-}
+  navigation: HomeScreenNavigationProp;
+};
 
-const Stack = createStackNavigator<RootStackParamList>()
+const Stack = createStackNavigator<RootStackParamList>();
 
-const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
-    return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text>首页</Text>
-            <Button 
-                title="跳转到第二页"
-                onPress={() => navigation.navigate('SecondPage')}
-            />
-        </View>
-    )
-}
+const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
+  return (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Text>首页</Text>
+      <Button
+        title={`跳转到第二页 (${result})`}
+        onPress={() => navigation.navigate('SecondPage')}
+      />
+    </View>
+  );
+};
 
 export default class App extends Component {
-    render() {
-        return (
-            <NavigationContainer>
-                <Stack.Navigator>
-                    <Stack.Screen name="Home" component={HomeScreen} />
-                    <Stack.Screen name="SecondPage" component={SecondPage} />
-                </Stack.Navigator>
-            </NavigationContainer>
-        )
-    }
+  render() {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="SecondPage" component={SecondPage} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
 }
