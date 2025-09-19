@@ -4,9 +4,9 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {StackNavigationProp} from '@react-navigation/stack';
 import SecondPage from './pages/SecondPage';
-import {multiply} from 'react-native-rn-mul';
+// import {multiply} from 'react-native-rn-mul';
 
-const result = multiply(4, 5);
+// const result = multiply(4, 5);
 type RootStackParamList = {
   Home: undefined;
   SecondPage: undefined;
@@ -25,7 +25,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Text>首页</Text>
       <Button
-        title={`跳转到第二页 (${result})`}
+        title={`跳转到第二页 (${"result"})`}
         onPress={() => navigation.navigate('SecondPage')}
       />
     </View>

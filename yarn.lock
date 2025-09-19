@@ -5618,9 +5618,6 @@ react-native-gesture-handler@^2.25.0:
     hoist-non-react-statics "^3.3.0"
     invariant "^2.2.4"
 
-"react-native-rn-mul@file:../rn-mul":
-  version "0.1.0"
-
 react-native-safe-area-context@^5.4.0:
   version "5.4.0"
   resolved "https://registry.npmmirror.com/react-native-safe-area-context/-/react-native-safe-area-context-5.4.0.tgz#04b51940408c114f75628a12a93569d30c525454"
