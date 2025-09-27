@@ -1,46 +1,45 @@
-import React from 'react';
-import Config from 'react-native-config';
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ *
+ * @format
+ */
+
+import { NewAppScreen } from '@react-native/new-app-screen';
+import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
 import {
-  ScrollView,
-  StatusBar,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-
-
-function App(): React.JSX.Element {
+function App() {
   const isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  return (
+    <SafeAreaProvider>
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <AppContent />
+    </SafeAreaProvider>
+  );
+}
 
-  const safePadding = '5%';
+function AppContent() {
+  const safeAreaInsets = useSafeAreaInsets();
 
   return (
-    <View style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
+    <View style={styles.container}>
+      <NewAppScreen
+        templateFileName="App.tsx"
+        safeAreaInsets={safeAreaInsets}
       />
-      <ScrollView
-        style={backgroundStyle}>
-        <View style={{ paddingRight: safePadding }}>
-          <Text>{Config.API_URL}</Text>
-        </View>
-      </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
 
 export default App;
