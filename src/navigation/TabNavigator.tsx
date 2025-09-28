@@ -1,14 +1,29 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Text } from 'react-native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Text, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import HomeScreen from '@/screens/HomeScreen';
 import SearchScreen from '@/screens/SearchScreen';
 import MessageScreen from '@/screens/MessageScreen';
 import ProfileScreen from '@/screens/ProfileScreen';
+import DetailScreen from '@/screens/DetailScreen';
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+const HomeStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="HomeMain" component={HomeScreen} />
+      <Stack.Screen name="Detail" component={DetailScreen} />
+    </Stack.Navigator>
+  );
+};
 
 const TabNavigator = () => {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -18,29 +33,20 @@ const TabNavigator = () => {
           backgroundColor: '#FFFFFF',
           borderTopWidth: 1,
           borderTopColor: '#E5E5EA',
-          paddingBottom: 5,
+          paddingBottom: insets.bottom,
           paddingTop: 5,
-          height: 60,
+          height: Platform.OS === 'android' ? 60 + Math.max(insets.bottom, 0) : 60 + insets.bottom,
         },
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: '500',
         },
-        headerStyle: {
-          backgroundColor: '#FFFFFF',
-          borderBottomWidth: 1,
-          borderBottomColor: '#E5E5EA',
-        },
-        headerTitleStyle: {
-          fontSize: 18,
-          fontWeight: '600',
-          color: '#000000',
-        },
+        headerShown: false,
       }}
     >
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={HomeStack}
         options={{
           title: '首页',
           tabBarLabel: '首页',
