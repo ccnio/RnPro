@@ -4,10 +4,19 @@ module.exports = {
     [
       'module-resolver',
       {
-        root: ['./src'],
+        root: ['.'],
         alias: {
+          '@': './src',
+          '@/components': './src/components',
+          '@/screens': './src/screens',
+          '@/navigation': './src/navigation',
           '@/utils': './src/utils',
-          '@/pages': './src/pages'
+          '@/pages': './src/pages',
+          '@/assets': './src/assets',
+          '@/services': './src/services',
+          '@/hooks': './src/hooks',
+          '@/types': './src/types',
+          '@/constants': './src/constants',
         }, 
       },
     ],

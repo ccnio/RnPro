@@ -9,7 +9,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import TabNavigator from './src/navigation/TabNavigator';
+import TabNavigator from '@/navigation/TabNavigator';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
