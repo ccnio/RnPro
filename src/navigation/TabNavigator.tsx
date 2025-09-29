@@ -1,25 +1,13 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
 import { Text, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import HomeScreen from '@/screens/HomeScreen';
 import SearchScreen from '@/screens/SearchScreen';
 import MessageScreen from '@/screens/MessageScreen';
 import ProfileScreen from '@/screens/ProfileScreen';
-import DetailScreen from '@/screens/DetailScreen';
 
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
-
-const HomeStack = () => {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="HomeMain" component={HomeScreen} />
-      <Stack.Screen name="Detail" component={DetailScreen} />
-    </Stack.Navigator>
-  );
-};
 
 const TabNavigator = () => {
   const insets = useSafeAreaInsets();
@@ -46,7 +34,7 @@ const TabNavigator = () => {
     >
       <Tab.Screen
         name="Home"
-        component={HomeStack}
+        component={HomeScreen}
         options={{
           title: '首页',
           tabBarLabel: '首页',
