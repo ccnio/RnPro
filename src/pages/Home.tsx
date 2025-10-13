@@ -3,6 +3,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '@react-navigation/core';
 import {RootStackParamList} from '@/navigator';
+import MyButton from '@/components/MyButton.tsx';
 
 const Home = () => {
   const insets = useSafeAreaInsets();
@@ -16,6 +17,12 @@ const Home = () => {
     <View style={{paddingTop: insets.top}}>
       <Text>this is home</Text>
       <Button title="go detail" onPress={onPress} />
+
+      <MyButton
+        text='自定义jsx组件'
+        disabled={false}
+        onClick={timestamp => console.log({timestamp})}
+      />
     </View>
   );
 };
