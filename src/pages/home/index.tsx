@@ -4,9 +4,10 @@ import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '@react-navigation/core';
 import {RootStackParamList} from '@/navigator';
 import MyButton from '@/components/MyButton.tsx';
+import BannerCarousel from '@/pages/home/Carousel.tsx';
 
 const Home = () => {
-  console.log("home render")
+  console.log('home render');
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
@@ -20,10 +21,11 @@ const Home = () => {
       <Button title="go detail" onPress={onPress} />
 
       <MyButton
-        text='自定义jsx组件'
+        text="自定义jsx组件"
         disabled={false}
         onClick={timestamp => console.log({timestamp})}
       />
+      <BannerCarousel />
     </View>
   );
 };

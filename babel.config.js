@@ -20,5 +20,6 @@ module.exports = {
         }, 
       },
     ],
+    'react-native-reanimated/plugin', // 添加这行
   ],
 };

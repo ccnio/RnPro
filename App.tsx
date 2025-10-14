@@ -6,13 +6,9 @@
  */
 
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {StatusBar, useColorScheme} from 'react-native';
+import {useColorScheme} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import TabNavigator from '@/navigation/TabNavigator';
-import Home from '@/pages/Home.tsx';
 import Navigator from '@/navigator/index';
-import BottomsTab from '@/navigator/BottomsTab.tsx';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -24,7 +20,7 @@ function App() {
         <TabNavigator />
       </NavigationContainer>*/}
 
-      <Navigator/>
+      <Navigator />
       {/*<BottomsTab />*/}
     </SafeAreaProvider>
   );

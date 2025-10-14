@@ -1,5 +1,5 @@
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import Home from '@/pages/Home';
+import Home from '@/pages/home';
 
 const Tab = createMaterialTopTabNavigator();
 const HomeTabs = () => {

@@ -18,11 +18,8 @@ const Home = () => {
       <Text>this is home</Text>
       <Button title="go detail" onPress={onPress} />
 
-      <MyButton
-        text='listen'
-        disabled={false}
-        onClick={timestamp => console.log({timestamp})}
-      />
+      <Text style={{bottom:20, position: 'absolute'}}>Listen</Text>
+      <Text>Listen2</Text>
     </View>
   );
 };
