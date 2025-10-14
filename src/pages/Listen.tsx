@@ -6,7 +6,6 @@ import {RootStackParamList} from '@/navigator';
 import MyButton from '@/components/MyButton.tsx';
 
 const Home = () => {
-  console.log("home render")
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
@@ -20,7 +19,7 @@ const Home = () => {
       <Button title="go detail" onPress={onPress} />
 
       <MyButton
-        text='自定义jsx组件'
+        text='listen'
         disabled={false}
         onClick={timestamp => console.log({timestamp})}
       />

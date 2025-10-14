@@ -12,6 +12,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import TabNavigator from '@/navigation/TabNavigator';
 import Home from '@/pages/Home.tsx';
 import Navigator from '@/navigator/index';
+import BottomsTab from '@/navigator/BottomsTab.tsx';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -24,6 +25,7 @@ function App() {
       </NavigationContainer>*/}
 
       <Navigator/>
+      {/*<BottomsTab />*/}
     </SafeAreaProvider>
   );
 }
