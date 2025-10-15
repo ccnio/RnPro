@@ -1,31 +1,79 @@
-import {Image, View} from 'react-native';
+import {ActivityIndicator, Image, Text, View} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import {viewportWidth} from '@/utils';
 import React, {useState} from 'react';
-
-const data = [
-  {id: 1, url: 'https://picsum.photos/800/400?1'},
-  {id: 2, url: 'https://picsum.photos/800/400?2'},
-  {id: 3, url: 'https://picsum.photos/800/400?3'},
-];
+import {useBanner} from '@/hooks/useBanner';
+import {ErrorDisplay} from '@/components/ErrorDisplay';
 
 const carouselWidth = viewportWidth;
-export default function BannerCarousel() {
+
+interface BannerCarouselProps {
+  type?: string; // 轮播图类型
+}
+
+export default function BannerCarousel({ type = 'home' }: BannerCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const {banners, loading, error, errorType, refetch} = useBanner({ type });
+
+  // 加载状态
+  if (loading) {
+    return (
+      <View style={{
+        height: 200,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#f5f5f5',
+        borderRadius: 10,
+      }}>
+        <ActivityIndicator size="large" color="#007AFF" />
+        <Text style={{marginTop: 10, color: '#666'}}>加载中...</Text>
+      </View>
+    );
+  }
+
+  // 错误状态
+  if (error && errorType) {
+    return (
+      <View style={{height: 200, borderRadius: 10, overflow: 'hidden'}}>
+        <ErrorDisplay
+          errorType={errorType}
+          message={error}
+          onRetry={refetch}
+          showRetry={true}
+          style={{height: 200}}
+        />
+      </View>
+    );
+  }
+
+  // 没有数据
+  if (!banners || banners.length === 0) {
+    return (
+      <View style={{
+        height: 200,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#f5f5f5',
+        borderRadius: 10,
+      }}>
+        <Text style={{color: '#666'}}>暂无轮播图</Text>
+      </View>
+    );
+  }
 
   return (
-    <View style={{ position: 'relative'}}>
+    <View style={{position: 'relative'}}>
       <Carousel
         loop={false}
         width={carouselWidth}
         height={200}
-        autoPlay={false}
-        data={data}
+        autoPlay={true}
+        data={banners}
         scrollAnimationDuration={1000}
         onSnapToItem={index => setCurrentIndex(index)}
         renderItem={({item}) => (
           <Image
-            source={{uri: item.url}}
+            source={{uri: item.imageUrl}}
             style={{width: '98%', height: 200, borderRadius: 10}}
             resizeMode="cover"
           />
@@ -44,7 +92,7 @@ export default function BannerCarousel() {
           alignItems: 'center',
           gap: 8,
         }}>
-        {data.map((_, index) => (
+        {banners.map((_, index) => (
           <View
             key={index}
             style={{

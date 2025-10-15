@@ -17,6 +17,7 @@ module.exports = {
           '@/hooks': './src/hooks',
           '@/types': './src/types',
           '@/constants': './src/constants',
+          '@/config': './src/config',
         }, 
       },
     ],

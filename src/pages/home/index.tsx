@@ -1,3 +1,4 @@
+// src/pages/home/index.tsx - 更新后的使用示例
 import {Button, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
@@ -5,6 +6,7 @@ import {NavigationProp} from '@react-navigation/core';
 import {RootStackParamList} from '@/navigator';
 import MyButton from '@/components/MyButton.tsx';
 import BannerCarousel from '@/pages/home/Carousel.tsx';
+import {ErrorBoundary} from '@/components/ErrorBoundary';
 
 const Home = () => {
   console.log('home render');
@@ -25,7 +27,10 @@ const Home = () => {
         disabled={false}
         onClick={timestamp => console.log({timestamp})}
       />
-      <BannerCarousel />
+
+      <ErrorBoundary>
+        <BannerCarousel type="promotion" />
+      </ErrorBoundary>
     </View>
   );
 };
