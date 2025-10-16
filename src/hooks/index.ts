@@ -3,3 +3,4 @@
 
 // Banner 相关
 export { useBanner } from './useBanner';
+export { useGuess } from './useGuess';

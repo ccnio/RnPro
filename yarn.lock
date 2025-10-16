@@ -5757,6 +5757,11 @@ react-is@^19.1.0:
   resolved "https://registry.npmmirror.com/react-is/-/react-is-19.2.0.tgz#ddc3b4a4e0f3336c3847f18b806506388d7b9973"
   integrity sha512-x3Ax3kNSMIIkyVYhWPyO09bu0uttcAIoecO/um/rKGQ4EltYWVYtyiGkS/3xMynrbVQdS69Jhlv8FXUEZehlzA==
 
+react-native-flipper@^0.273.0:
+  version "0.273.0"
+  resolved "https://registry.npmmirror.com/react-native-flipper/-/react-native-flipper-0.273.0.tgz#20c6922d135705da65e00631ade6c1bb9ab7fc3c"
+  integrity sha512-Eq0GW5ng8MrrW8JQDPIuqf9NVZRMhOF6xOCA7+xsy1sYxDZ1q81x5Mt4jNkk4vAdqILT5u8l/0ONilEIbiWlBQ==
+
 react-native-gesture-handler@^2.28.0:
   version "2.28.0"
   resolved "https://registry.npmmirror.com/react-native-gesture-handler/-/react-native-gesture-handler-2.28.0.tgz#07fb4f5eae72f810aac3019b060d26c1835bfd0c"

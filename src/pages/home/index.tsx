@@ -1,37 +1,52 @@
 // src/pages/home/index.tsx - 更新后的使用示例
-import {Button, Text, View} from 'react-native';
+import {View, ScrollView} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useNavigation} from '@react-navigation/native';
-import {NavigationProp} from '@react-navigation/core';
-import {RootStackParamList} from '@/navigator';
-import MyButton from '@/components/MyButton.tsx';
 import BannerCarousel from '@/pages/home/Carousel.tsx';
 import {ErrorBoundary} from '@/components/ErrorBoundary';
+import {GuessYouLike} from '@/pages/home/GuessYouLike.tsx';
 
 const Home = () => {
   console.log('home render');
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  // const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const onPress = () => {
-    navigation.navigate('Detail', {id: '123', name: 'example'});
+  // const onPress = () => {
+  //   navigation.navigate('Detail', {id: '123', name: 'example'});
+  // };
+
+  const handleGuessItemPress = (item: any) => {
+    console.log('猜你喜欢 item 点击:', item);
+    // 这里可以处理点击逻辑，比如跳转到详情页
+  };
+
+  const handleMorePress = () => {
+    console.log('查看更多猜你喜欢');
+    // 这里可以处理查看更多逻辑
+  };
+
+  const handleRefreshPress = () => {
+    console.log('换一批猜你喜欢');
+    // 这里可以处理换一批逻辑
   };
 
   return (
-    <View style={{paddingTop: insets.top}}>
-      <Text>this is home</Text>
-      <Button title="go detail" onPress={onPress} />
+    <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+      <View style={{paddingTop: insets.top}}>
+        {/* Banner 轮播图 */}
+        <ErrorBoundary>
+          <BannerCarousel type="promotion" />
+        </ErrorBoundary>
 
-      <MyButton
-        text="自定义jsx组件"
-        disabled={false}
-        onClick={timestamp => console.log({timestamp})}
-      />
-
-      <ErrorBoundary>
-        <BannerCarousel type="promotion" />
-      </ErrorBoundary>
-    </View>
+        {/* 猜你喜欢 */}
+        <ErrorBoundary>
+          <GuessYouLike
+            onItemPress={handleGuessItemPress}
+            onMorePress={handleMorePress}
+            onRefreshPress={handleRefreshPress}
+          />
+        </ErrorBoundary>
+      </View>
+    </ScrollView>
   );
 };
 
