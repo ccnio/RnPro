@@ -1,39 +1,14 @@
 // src/hooks/useBanner.ts
-import {useQuery} from '@tanstack/react-query';
-import {Banner, bannerApi, BannerListParams} from '@/services/banner';
-import {AppError, ErrorType} from '@/types/error';
+import { Banner, bannerApi, BannerListParams } from '@/services/banner';
+import { createApiHook, BaseApiReturn } from './useApiData';
 
-interface UseBannerReturn {
+// 使用基础接口，只需要添加特定的数据字段
+interface UseBannerReturn extends Omit<BaseApiReturn<Banner[]>, 'data'> {
   banners: Banner[];
-  loading: boolean;
-  error: string | null;
-  errorType: ErrorType | null;
-  refetch: () => Promise<void>;
 }
 
-export const useBanner = (params?: BannerListParams): UseBannerReturn => {
-  const {
-    data: banners = [],
-    isLoading: loading,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ["banners", params?.type],
-    queryFn: () => bannerApi.getList(params),
-  });
-
-  // 处理错误信息，保持原有接口
-  const appError = error as AppError & Error;
-  const errorMessage = appError?.message || '获取轮播失败';
-  const errorType = appError?.type || ErrorType.OTHER;
-
-  return {
-    banners,
-    loading,
-    error: error ? errorMessage : null,
-    errorType: error ? errorType : null,
-    refetch: async () => {
-      await refetch();
-    },
-  };
-};
+export const useBanner = createApiHook<Banner[], BannerListParams>({
+  queryKey: (params) => ['banners', params?.type || 'home'],
+  queryFn: (params) => bannerApi.getList(params),
+  dataKey: 'banners',
+}) as (params?: BannerListParams) => UseBannerReturn;

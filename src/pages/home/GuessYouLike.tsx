@@ -1,7 +1,6 @@
-// src/components/GuessYouLike.tsx
+// src/pages/home/GuessYouLike.tsx
 import React from 'react';
 import {
-  ActivityIndicator,
   Dimensions,
   Image,
   StyleSheet,
@@ -10,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import {useGuess} from '@/hooks/useGuess.ts';
-import {ErrorDisplay} from '@/components/ErrorDisplay.tsx';
+import {DataLoadingWrapper} from '@/components/DataLoadingWrapper';
 import IconFont from '@/assets/iconfont';
 
 const {width: screenWidth} = Dimensions.get('window');
@@ -22,69 +21,21 @@ interface GuessYouLikeProps {
   onItemPress?: (item: any) => void;
   onMorePress?: () => void;
   onRefreshPress?: () => void;
+  type?: string;
+  timestamp?: number;
 }
 
 export const GuessYouLike: React.FC<GuessYouLikeProps> = ({
   onItemPress,
   onMorePress,
   onRefreshPress,
+  type = 'home',
+  timestamp = 0,
 }) => {
-  const {guessItems, loading, error, errorType, refetch} = useGuess();
-
-  // 加载状态
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>猜你喜欢</Text>
-          </View>
-        </View>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#007AFF" />
-          <Text style={styles.loadingText}>加载中...</Text>
-        </View>
-      </View>
-    );
-  }
-
-  // 错误状态
-  if (error && errorType) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.titleContainer}>
-            <IconFont name="icon-xihuan" size={16} color="#007AFF" />
-            <Text style={styles.title}>猜你喜欢</Text>
-          </View>
-        </View>
-        <View style={styles.errorContainer}>
-          <ErrorDisplay
-            errorType={errorType}
-            message={error}
-            onRetry={refetch}
-            showRetry={true}
-          />
-        </View>
-      </View>
-    );
-  }
-
-  // 没有数据
-  if (!guessItems || guessItems.length === 0) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>猜你喜欢</Text>
-          </View>
-        </View>
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>暂无推荐内容</Text>
-        </View>
-      </View>
-    );
-  }
+  const {guessItems, loading, error, errorType, refetch} = useGuess({
+    type,
+    timestamp,
+  });
 
   // 渲染单个 item
   const renderItem = (item: any, index: number) => (
@@ -133,10 +84,23 @@ export const GuessYouLike: React.FC<GuessYouLikeProps> = ({
       </View>
 
       {/* 内容部分 */}
-      <View style={styles.content}>
-        {renderRow(firstRow, 0)}
-        {secondRow.length > 0 && renderRow(secondRow, 1)}
-      </View>
+      <DataLoadingWrapper
+        loading={loading}
+        error={error}
+        errorType={errorType}
+        onRetry={refetch}
+        emptyMessage="暂无推荐内容"
+        loadingMessage="加载中..."
+        loadingHeight={200}
+        containerStyle={styles.contentContainer}
+      >
+        {guessItems && guessItems.length > 0 && (
+          <View style={styles.content}>
+            {renderRow(firstRow, 0)}
+            {secondRow.length > 0 && renderRow(secondRow, 1)}
+          </View>
+        )}
+      </DataLoadingWrapper>
 
       {/* 换一批按钮 */}
       <View style={styles.refreshContainer}>
@@ -169,13 +133,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  icon: {
-    marginRight: 8,
-  },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginStart:10,
+    marginStart: 10,
     color: '#333',
   },
   moreButton: {
@@ -185,6 +146,9 @@ const styles = StyleSheet.create({
   moreText: {
     fontSize: 14,
     color: '#007AFF',
+  },
+  contentContainer: {
+    marginBottom: 16,
   },
   content: {
     // 内容容器
@@ -214,28 +178,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 16,
     width: itemWidth,
-  },
-  loadingContainer: {
-    height: 200,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 10,
-    color: '#666',
-    fontSize: 14,
-  },
-  errorContainer: {
-    height: 200,
-  },
-  emptyContainer: {
-    height: 200,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyText: {
-    color: '#666',
-    fontSize: 14,
   },
   refreshContainer: {
     alignItems: 'center',

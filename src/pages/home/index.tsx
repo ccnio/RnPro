@@ -43,6 +43,8 @@ const Home = () => {
             onItemPress={handleGuessItemPress}
             onMorePress={handleMorePress}
             onRefreshPress={handleRefreshPress}
+            type="home"
+            timestamp={0}
           />
         </ErrorBoundary>
       </View>
