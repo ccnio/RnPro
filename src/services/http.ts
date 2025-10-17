@@ -15,8 +15,8 @@ export interface ApiResponse<T = any> {
 const createHttpClient = (): AxiosInstance => {
   const instance = axios.create({
     baseURL: __DEV__
-      ? 'https://m1.apifoxmock.com/m1/7240974-6967587-default/m1/7240974-6967587-default/api'
-      : 'https://m1.apifoxmock.com/m1/7240974-6967587-default/m1/7240974-6967587-default/api',
+      ? 'http://127.0.0.1:4523/m1/7240974-6967587-default/api'
+      : 'http://127.0.0.1:4523/m1/7240974-6967587-default/api',
     timeout: appConfig.api.timeout,
     headers: {
       'Content-Type': 'application/json',
