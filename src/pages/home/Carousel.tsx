@@ -9,11 +9,16 @@ const carouselWidth = viewportWidth;
 
 interface BannerCarouselProps {
   type?: string; // 轮播图类型
+  onSlideChange?: (index: number) => void; // 滑动回调
 }
 
-export default function BannerCarousel({ type = 'home' }: BannerCarouselProps) {
+export default function BannerCarousel({ type = 'home', onSlideChange }: BannerCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const {banners, loading, error, errorType, refetch} = useBanner({ type });
+
+  // 调试信息
+  console.log('BannerCarousel - banners数量:', banners?.length);
+  console.log('BannerCarousel - banners数据:', banners);
 
   return (
     <DataLoadingWrapper
@@ -28,19 +33,29 @@ export default function BannerCarousel({ type = 'home' }: BannerCarouselProps) {
       {banners && banners.length > 0 && (
         <View style={{position: 'relative'}}>
           <Carousel
-            loop={false}
+            loop={true}
             width={carouselWidth}
             height={200}
-            autoPlay={true}
+            autoPlayInterval={3000}
+            autoPlayReverse={false}
             data={banners}
-            scrollAnimationDuration={1000}
-            onSnapToItem={index => setCurrentIndex(index)}
+            scrollAnimationDuration={500}
+            defaultIndex={0}
+            pagingEnabled={true}
+            snapEnabled={true}
+            onSnapToItem={index => {
+              setCurrentIndex(index);
+              onSlideChange?.(index);
+            }}
             renderItem={({item}) => (
-              <Image
-                source={{uri: item.imageUrl}}
-                style={{width: '98%', height: 200, borderRadius: 10}}
-                resizeMode="cover"
-              />
+              <View style={{width: '100%', height: 200, justifyContent: 'center', alignItems: 'center'}}>
+                <Image
+                  source={{uri: item.imageUrl}}
+                  style={{width: '92%', height: 200, borderRadius: 10}}
+                  resizeMode="cover"
+                  fadeDuration={0}
+                />
+              </View>
             )}
           />
 

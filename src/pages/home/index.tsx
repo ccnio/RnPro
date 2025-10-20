@@ -1,7 +1,8 @@
 // src/pages/home/index.tsx - 使用 FlatList 重构
-import React, { useState, useCallback, useMemo } from 'react';
-import {View, FlatList, RefreshControl, Text, ActivityIndicator} from 'react-native';
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
+import {View, FlatList, RefreshControl, Text, ActivityIndicator, Dimensions, Animated} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import LinearGradient from 'react-native-linear-gradient';
 import {ErrorBoundary} from '@/components/ErrorBoundary';
 import {ErrorDisplay} from '@/components/ErrorDisplay';
 import {HomeHeader} from '@/components/HomeHeader';
@@ -9,10 +10,14 @@ import {FeedItem} from '@/components/FeedItem';
 import {useFeed} from '@/hooks/useFeed';
 import {FeedItem as FeedItemType} from '@/services/feed';
 
+const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
+
 const Home = () => {
   console.log('home render');
   const insets = useSafeAreaInsets();
   const [refreshing, setRefreshing] = useState(false);
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
   
   // Feed 数据
   const {
@@ -52,6 +57,43 @@ const Home = () => {
     // 这里可以处理点击逻辑，比如跳转到详情页
   };
 
+  const handleSearch = (query: string) => {
+    console.log('搜索:', query);
+    // 这里可以处理搜索逻辑，比如跳转到搜索结果页
+  };
+
+  const handleHistoryItemPress = (item: any) => {
+    console.log('搜索历史点击:', item);
+    // 这里可以处理搜索历史点击逻辑
+  };
+
+  const handleBannerSlideChange = (index: number) => {
+    // 添加颜色切换动画
+    Animated.sequence([
+      Animated.timing(fadeAnim, {
+        toValue: 0.3,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: false,
+      }),
+    ]).start();
+    
+    setCurrentBannerIndex(index);
+  };
+
+  // 不同banner页面的渐变颜色配置
+  const gradientColors = [
+    ['rgba(248, 100, 66, 1)', 'rgba(248, 100, 66, 0.8)', 'rgba(248, 100, 66, 0.4)', 'rgba(255, 255, 255, 0)'], // 橙色
+    ['rgba(76, 175, 80, 1)', 'rgba(76, 175, 80, 0.8)', 'rgba(76, 175, 80, 0.4)', 'rgba(255, 255, 255, 0)'], // 绿色
+    ['rgba(33, 150, 243, 1)', 'rgba(33, 150, 243, 0.8)', 'rgba(33, 150, 243, 0.4)', 'rgba(255, 255, 255, 0)'], // 蓝色
+    ['rgba(156, 39, 176, 1)', 'rgba(156, 39, 176, 0.8)', 'rgba(156, 39, 176, 0.4)', 'rgba(255, 255, 255, 0)'], // 紫色
+    ['rgba(255, 152, 0, 1)', 'rgba(255, 152, 0, 0.8)', 'rgba(255, 152, 0, 0.4)', 'rgba(255, 255, 255, 0)'], // 深橙色
+  ];
+
   // 下拉刷新处理
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -69,9 +111,12 @@ const Home = () => {
         onGuessItemPress={handleGuessItemPress}
         onMorePress={handleMorePress}
         onRefreshPress={handleRefreshPress}
+        onSearch={handleSearch}
+        onHistoryItemPress={handleHistoryItemPress}
+        onBannerSlideChange={handleBannerSlideChange}
       />
     </View>
-  ), [insets.top, handleGuessItemPress, handleMorePress, handleRefreshPress]);
+  ), [insets.top, handleGuessItemPress, handleMorePress, handleRefreshPress, handleSearch, handleHistoryItemPress, handleBannerSlideChange]);
 
   // 渲染 Feed Item
   const renderFeedItem = useCallback(({ item }: { item: FeedItemType }) => (
@@ -140,8 +185,39 @@ const Home = () => {
     );
   }, [feedLoading, feedError, feedErrorType, handleRefresh]);
 
+  // 固定的渐变背景组件
+  const FixedGradientBackground = () => {
+    const bannerHeight = 200;
+    const gradientHeight = insets.top + (bannerHeight * 2) / 3; // 状态栏高度 + banner高度的2/3
+    const currentColors = gradientColors[currentBannerIndex] || gradientColors[0]; // 使用当前banner对应的颜色
+    
+    return (
+      <Animated.View
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: screenWidth,
+          height: gradientHeight,
+          zIndex: -1,
+          opacity: fadeAnim,
+        }}
+      >
+        <LinearGradient
+          colors={currentColors}
+          locations={[0, 0.3, 0.7, 1]}
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
+        />
+      </Animated.View>
+    );
+  };
+
   return (
     <View style={{ flex: 1 }}>
+      <FixedGradientBackground />
       <FlatList
         data={feedItems}
         renderItem={renderFeedItem}
