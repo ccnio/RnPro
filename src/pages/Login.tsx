@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,12 +6,15 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  FlatList,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import {useForm, Controller} from 'react-hook-form';
 import IconFont from '@/assets/iconfont';
 import {useUser} from '@/hooks/useUserContext';
+import {useAccountSearch} from '@/hooks/useAccountSearch';
+import {realmManager} from '@/database/RealmManager';
 
 // 定义表单数据类型
 interface LoginFormData {
@@ -27,6 +30,20 @@ const Login = () => {
   const navigation = useNavigation();
   const {login} = useUser();
   const [loginType, setLoginType] = useState<LoginType>('username');
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const {searchResults, isSearching, searchAccounts, saveAccount, clearSearchResults} = useAccountSearch();
+
+  // 初始化 Realm 数据库
+  useEffect(() => {
+    const initRealm = async () => {
+      try {
+        await realmManager.initialize();
+      } catch (error) {
+        console.error('初始化 Realm 失败:', error);
+      }
+    };
+    initRealm();
+  }, []);
 
   // 使用 React Hook Form
   const {
@@ -56,7 +73,12 @@ const Login = () => {
         avatar: 'https://via.placeholder.com/100',
       };
 
-      login(userInfo);
+      // 保存账号信息到 Realm
+      const email = loginType === 'email' ? data.username.trim() : undefined;
+      const token = `token_${Date.now()}_${Math.random()}`; // 模拟 token
+      
+      // 直接通过 login 方法保存到数据库
+      login(userInfo, token);
 
       Alert.alert('登录成功', `欢迎回来，${userInfo.username}！`, [
         {
@@ -78,6 +100,29 @@ const Login = () => {
   const switchLoginType = (type: LoginType) => {
     setLoginType(type);
     reset(); // 清空表单
+    clearSearchResults(); // 清空搜索结果
+    setShowSearchResults(false);
+  };
+
+  // 处理输入变化，触发搜索
+  const handleInputChange = (text: string) => {
+    if (text.length >= 2) {
+      searchAccounts(text);
+      setShowSearchResults(true);
+    } else {
+      setShowSearchResults(false);
+      clearSearchResults();
+    }
+  };
+
+  // 选择搜索结果的账号
+  const selectAccount = (account: any) => {
+    reset({
+      username: loginType === 'email' ? account.email || account.username : account.username,
+      password: '',
+    });
+    setShowSearchResults(false);
+    clearSearchResults();
   };
 
   return (
@@ -174,7 +219,10 @@ const Login = () => {
                       loginType === 'email' ? '请输入邮箱地址' : '请输入用户名'
                     }
                     value={value}
-                    onChangeText={onChange}
+                    onChangeText={(text) => {
+                      onChange(text);
+                      handleInputChange(text);
+                    }}
                     onBlur={onBlur}
                     autoCapitalize="none"
                     autoCorrect={false}
@@ -189,6 +237,34 @@ const Login = () => {
           </View>
           {errors.username && (
             <Text style={styles.errorText}>{errors.username.message}</Text>
+          )}
+
+          {/* 搜索结果列表 */}
+          {showSearchResults && searchResults.length > 0 && (
+            <View style={styles.searchResultsContainer}>
+              <FlatList
+                data={searchResults}
+                keyExtractor={(item) => item.id}
+                renderItem={({item}) => (
+                  <TouchableOpacity
+                    style={styles.searchResultItem}
+                    onPress={() => selectAccount(item)}>
+                    <View style={styles.searchResultContent}>
+                      <Text style={styles.searchResultText}>
+                        {loginType === 'email' ? (item.email || item.username) : item.username}
+                      </Text>
+                      <Text style={styles.searchResultSubtext}>
+                        {item.loginType === 'email' ? '邮箱登录' : '用户名登录'} • 
+                        登录 {item.loginCount} 次
+                      </Text>
+                    </View>
+                    <IconFont name="icon-user" size={16} color="#999" />
+                  </TouchableOpacity>
+                )}
+                style={styles.searchResultsList}
+                showsVerticalScrollIndicator={false}
+              />
+            </View>
           )}
 
           {/* 密码输入 */}
@@ -361,6 +437,46 @@ const styles = StyleSheet.create({
     color: '#4CAF50',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  // 搜索结果样式
+  searchResultsContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    marginTop: 8,
+    maxHeight: 200,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  searchResultsList: {
+    maxHeight: 200,
+  },
+  searchResultItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  searchResultContent: {
+    flex: 1,
+  },
+  searchResultText: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
+  },
+  searchResultSubtext: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: 2,
   },
   loginButton: {
     backgroundColor: '#f86442',

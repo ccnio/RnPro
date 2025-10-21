@@ -17,7 +17,7 @@ import {useUser} from '@/hooks/useUserContext';
 const Account = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const {user, isLoggedIn, logout} = useUser();
+  const {user, isLoggedIn, isLoading, logout} = useUser();
 
   const handleLogin = () => {
     navigation.navigate('Login');
@@ -83,9 +83,18 @@ const Account = () => {
     </View>
   );
 
+  // 加载状态
+  const renderLoading = () => (
+    <View style={styles.container}>
+      <View style={styles.content}>
+        <Text style={styles.loadingText}>加载中...</Text>
+      </View>
+    </View>
+  );
+
   return (
     <View style={[styles.wrapper, {paddingTop: insets.top}]}>
-      {isLoggedIn ? renderLoggedIn() : renderNotLoggedIn()}
+      {isLoading ? renderLoading() : (isLoggedIn ? renderLoggedIn() : renderNotLoggedIn())}
     </View>
   );
 };
@@ -173,6 +182,11 @@ const styles = StyleSheet.create({
     color: '#f86442',
     fontSize: 14,
     fontWeight: '500',
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
   },
 });
 
