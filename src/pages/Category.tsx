@@ -1,5 +1,5 @@
 // src/pages/Category.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import IconFont from '@/assets/iconfont';
+import { MMKV } from 'react-native-mmkv';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -30,6 +31,8 @@ interface CategoryGroup {
 const Category: React.FC = () => {
   const insets = useSafeAreaInsets();
   const [isEditMode, setIsEditMode] = useState(false);
+  const MY_CATEGORIES_STORAGE_KEY = 'my_categories_ids_v1';
+  const storage = new MMKV();
 
   // 初始分类数据
   const initialCategories: CategoryItem[] = [
@@ -87,6 +90,105 @@ const Category: React.FC = () => {
     },
   ]);
 
+  // 初始快照用于重建（避免在异步加载时丢失来源信息）
+  const initialGroupsRef = useRef<CategoryGroup[] | null>(null);
+  if (initialGroupsRef.current == null) {
+    initialGroupsRef.current = JSON.parse(JSON.stringify([] as any)) as any;
+    initialGroupsRef.current = JSON.parse(JSON.stringify([
+      {
+        id: 'my-categories',
+        title: '我的分类',
+        items: [
+          { id: '1', name: '音乐', icon: 'icon-bofang', color: '#FF6B6B' },
+          { id: '2', name: '播客', icon: 'icon-shengyin', color: '#4ECDC4' },
+        ],
+      },
+      {
+        id: 'entertainment',
+        title: '娱乐',
+        items: [
+          { id: '3', name: '有声书', icon: 'icon-shijian', color: '#45B7D1' },
+          { id: '4', name: '儿童', icon: 'icon-xihuan', color: '#96CEB4' },
+          { id: '10', name: '娱乐', icon: 'icon-huanyipi', color: '#85C1E9' },
+        ],
+      },
+      {
+        id: 'education',
+        title: '教育',
+        items: [
+          { id: '5', name: '教育', icon: 'icon-message', color: '#FFEAA7' },
+          { id: '6', name: '商业', icon: 'icon-more', color: '#DDA0DD' },
+        ],
+      },
+      {
+        id: 'lifestyle',
+        title: '生活',
+        items: [
+          { id: '7', name: '健康', icon: 'icon-shoucang', color: '#98D8C8' },
+          { id: '8', name: '科技', icon: 'icon-play2', color: '#F7DC6F' },
+          { id: '9', name: '体育', icon: 'icon-fullscreen', color: '#BB8FCE' },
+          { id: '11', name: '新闻', icon: 'icon-down', color: '#F8C471' },
+          { id: '12', name: '生活', icon: 'icon-paste', color: '#82E0AA' },
+        ],
+      },
+    ]));
+  }
+
+  // 将 ID 列表重建为完整的分组结构
+  const rebuildGroupsWithMyIds = (myIds: string[]): CategoryGroup[] => {
+    const baseGroups = JSON.parse(JSON.stringify(initialGroupsRef.current)) as CategoryGroup[];
+    const allItemsMap = new Map<string, CategoryItem>();
+    baseGroups.forEach(group => {
+      group.items.forEach(item => {
+        allItemsMap.set(item.id, item);
+      });
+    });
+
+    // 先剔除其他分组中的 myIds
+    const prunedOtherGroups = baseGroups.map(group => {
+      if (group.id === 'my-categories') return group;
+      return {
+        ...group,
+        items: group.items.filter(item => !myIds.includes(item.id)),
+      };
+    });
+
+    // 构建 my-categories 项
+    const myItems: CategoryItem[] = myIds
+      .map(id => allItemsMap.get(id))
+      .filter(Boolean) as CategoryItem[];
+
+    // 替换 my-categories 组
+    const finalGroups = prunedOtherGroups.map(group => {
+      if (group.id === 'my-categories') {
+        return { ...group, items: myItems };
+      }
+      return group;
+    });
+
+    return finalGroups;
+  };
+
+  const persistMyCategories = (groups: CategoryGroup[]) => {
+    try {
+      const myGroup = groups.find(g => g.id === 'my-categories');
+      const myIds = (myGroup?.items ?? []).map(i => i.id);
+      storage.set(MY_CATEGORIES_STORAGE_KEY, JSON.stringify(myIds));
+    } catch {}
+  };
+
+  // 首次加载：恢复本地保存的“我的分类”顺序
+  useEffect(() => {
+    try {
+      const raw = storage.getString(MY_CATEGORIES_STORAGE_KEY);
+      if (raw) {
+        const ids: string[] = JSON.parse(raw);
+        const next = rebuildGroupsWithMyIds(ids);
+        setCategoryGroups(next);
+      }
+    } catch {}
+  }, []);
+
   // 处理编辑模式切换
   const handleEditToggle = () => {
     setIsEditMode(!isEditMode);
@@ -109,8 +211,7 @@ const Category: React.FC = () => {
   const moveItemToMyCategories = (item: CategoryItem, fromGroupId: string) => {
     setCategoryGroups(prevGroups => {
       const newGroups = [...prevGroups];
-      
-      // 从原分类组中移除item
+
       const fromGroupIndex = newGroups.findIndex(group => group.id === fromGroupId);
       if (fromGroupIndex !== -1) {
         newGroups[fromGroupIndex] = {
@@ -119,19 +220,20 @@ const Category: React.FC = () => {
         };
       }
 
-      // 添加到我的分类
       const myCategoriesIndex = newGroups.findIndex(group => group.id === 'my-categories');
       if (myCategoriesIndex !== -1) {
         const itemWithOriginalCategory = {
           ...item,
           originalCategoryId: fromGroupId,
-        };
+        } as CategoryItem;
         newGroups[myCategoriesIndex] = {
           ...newGroups[myCategoriesIndex],
           items: [...newGroups[myCategoriesIndex].items, itemWithOriginalCategory],
         };
       }
 
+      // 持久化新的“我的分类”
+      persistMyCategories(newGroups);
       return newGroups;
     });
   };
@@ -165,8 +267,15 @@ const Category: React.FC = () => {
         };
       }
 
+      // 持久化新的“我的分类”
+      persistMyCategories(newGroups);
       return newGroups;
     });
+  };
+
+  // 若未来支持拖拽排序，可在排序回调中调用此方法保存顺序
+  const persistCurrentMyOrder = () => {
+    persistMyCategories(categoryGroups);
   };
 
   // 渲染分类item
