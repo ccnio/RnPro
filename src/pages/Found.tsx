@@ -1,30 +1,53 @@
-import {Button, Text, View} from 'react-native';
+import React from 'react';
+import {Text, View, StyleSheet} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '@react-navigation/core';
 import {RootStackParamList} from '@/navigator';
-import MyButton from '@/components/MyButton.tsx';
+import {useUser} from '@/hooks/useUserContext';
 
-const Home = () => {
+const Found = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-
-  const onPress = () => {
-    navigation.navigate('Detail', {id: '123', name: 'example'});
-  };
+  const {user, isLoggedIn} = useUser();
 
   return (
-    <View style={{paddingTop: insets.top}}>
-      <Text>this is home</Text>
-      <Button title="go detail" onPress={onPress} />
-
-      <MyButton
-        text='found'
-        disabled={false}
-        onClick={timestamp => console.log({timestamp})}
-      />
+    <View style={[styles.container, {paddingTop: insets.top}]}>
+      <View style={styles.content}>
+        {isLoggedIn ? (
+          <Text style={styles.greeting}>
+            hi，{user?.username}
+          </Text>
+        ) : (
+          <Text style={styles.defaultText}>this is found</Text>
+        )}
+      </View>
     </View>
   );
 };
 
-export default Home;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  greeting: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#333',
+    textAlign: 'center',
+  },
+  defaultText: {
+    fontSize: 18,
+    color: '#666',
+    textAlign: 'center',
+  },
+});
+
+export default Found;

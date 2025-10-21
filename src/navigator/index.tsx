@@ -1,6 +1,7 @@
 import {NavigationContainer} from '@react-navigation/native';
 import Detail from '@/pages/Detail.tsx';
 import Category from '@/pages/Category.tsx';
+import Login from '@/pages/Login.tsx';
 import {createStackNavigator} from '@react-navigation/stack';
 import BottomsTab from '@/navigator/BottomsTab.tsx';
 
@@ -8,6 +9,7 @@ import BottomsTab from '@/navigator/BottomsTab.tsx';
 export type RootStackParamList = {
   Detail: {id: string; name: string};
   Category: undefined;
+  Login: undefined;
 };
 
 const StackNavigator = createStackNavigator();
@@ -18,6 +20,7 @@ const Navigator = () => {
         <StackNavigator.Screen name="BottomsTab" component={BottomsTab} />
         <StackNavigator.Screen name="Detail" component={Detail} />
         <StackNavigator.Screen name="Category" component={Category} />
+        <StackNavigator.Screen name="Login" component={Login} />
       </StackNavigator.Navigator>
     </NavigationContainer>
   );
