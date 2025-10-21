@@ -1,20 +1,51 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {View, TouchableOpacity, Text, StyleSheet, Dimensions} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Home from '@/pages/home';
 import IconFont from '@/assets/iconfont';
+import { useMyCategories, CategoryItem } from '@/hooks/useMyCategoriesContext';
+import CategoryTab from '@/components/CategoryTab';
 
 const {width: screenWidth} = Dimensions.get('window');
 const Tab = createMaterialTopTabNavigator();
 
 const HomeTabs = () => {
   const navigation = useNavigation();
+  const { myCategories, isLoading } = useMyCategories();
+  
+  console.log('HomeTabs render - myCategories:', myCategories.map(c => c.name), 'isLoading:', isLoading);
 
   const handleCategoryPress = () => {
     // 导航到分类页面
     navigation.navigate('Category' as never);
   };
+
+  // 创建稳定的渲染函数
+  const createCategoryRenderer = useCallback((category: CategoryItem) => {
+    return () => <CategoryTab category={category} />;
+  }, []);
+
+  // 动态生成Tab.Screen组件
+  const renderTabScreens = useMemo(() => {
+    if (isLoading) {
+      return (
+        <Tab.Screen name="Home" component={Home} />
+      );
+    }
+
+    return myCategories.map((category) => (
+      <Tab.Screen 
+        key={category.id}
+        name={`Category_${category.id}`} 
+        options={{
+          title: category.name,
+        }}
+      >
+        {createCategoryRenderer(category)}
+      </Tab.Screen>
+    ));
+  }, [myCategories, isLoading, createCategoryRenderer]);
 
   return (
     <View style={styles.container}>
@@ -36,8 +67,7 @@ const HomeTabs = () => {
             borderBottomColor: '#e0e0e0',
           },
         }}>
-        <Tab.Screen name="Home" component={Home} />
-        <Tab.Screen name="Home2" component={Home} />
+        {renderTabScreens}
       </Tab.Navigator>
       
       {/* 分类入口按钮 */}
