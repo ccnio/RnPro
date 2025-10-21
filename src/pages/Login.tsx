@@ -12,7 +12,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import {useForm, Controller} from 'react-hook-form';
 import IconFont from '@/assets/iconfont';
-import {useUser} from '@/hooks/useUserContext';
+import {useUserStore} from '@/stores/userStore';
 import {useAccountSearch} from '@/hooks/useAccountSearch';
 import {realmManager} from '@/database/RealmManager';
 
@@ -28,7 +28,7 @@ type LoginType = 'username' | 'email';
 const Login = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const {login} = useUser();
+  const {login} = useUserStore();
   const [loginType, setLoginType] = useState<LoginType>('username');
   const [showSearchResults, setShowSearchResults] = useState(false);
   const {searchResults, isSearching, searchAccounts, saveAccount, clearSearchResults} = useAccountSearch();

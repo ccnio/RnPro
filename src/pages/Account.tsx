@@ -12,12 +12,12 @@ import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '@react-navigation/core';
 import {RootStackParamList} from '@/navigator';
 import IconFont from '@/assets/iconfont';
-import {useUser} from '@/hooks/useUserContext';
+import {useUserStore} from '@/stores/userStore';
 
 const Account = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const {user, isLoggedIn, isLoading, logout} = useUser();
+  const {user, isLoggedIn, isLoading, logout} = useUserStore();
 
   const handleLogin = () => {
     navigation.navigate('Login');

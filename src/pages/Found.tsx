@@ -4,12 +4,12 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '@react-navigation/core';
 import {RootStackParamList} from '@/navigator';
-import {useUser} from '@/hooks/useUserContext';
+import {useUserStore} from '@/stores/userStore';
 
 const Found = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const {user, isLoggedIn} = useUser();
+  const {user, isLoggedIn} = useUserStore();
 
   return (
     <View style={[styles.container, {paddingTop: insets.top}]}>
