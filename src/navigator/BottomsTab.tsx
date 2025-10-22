@@ -1,9 +1,9 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Listen from '@/pages/Listen.tsx';
 import Found from '@/pages/Found.tsx';
 import Account from '@/pages/Account.tsx';
 import IconFont from '@/assets/iconfont';
 import HomeTabs from '@/navigator/HomeTabs.tsx';
+import Case from '@/pages/Ui.tsx';
 
 export type BottomTabParamList = {
   Home: undefined;
@@ -39,9 +39,9 @@ const BottomsTab = () => {
         options={{tabBarLabel: '首页', tabBarIcon: HomeIcon}}
       />
       <Tab.Screen
-        name="Listen"
-        component={Listen}
-        options={{tabBarLabel: '我听', tabBarIcon: ListenIcon}}
+        name="Case"
+        component={Case}
+        options={{tabBarLabel: 'Case', tabBarIcon: ListenIcon}}
       />
       <Tab.Screen
         name="Found"
