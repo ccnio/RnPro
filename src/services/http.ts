@@ -2,7 +2,7 @@
 import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
 import {appConfig} from '@/config/app';
 import {ErrorHandler} from '@/utils/errorHandler';
-import {ErrorType, AppError} from '@/types/error';
+import {Resource, Success, ResourceError, createSuccess, createError} from '@/types/resource';
 
 // 响应数据接口
 export interface ApiResponse<T = any> {
@@ -55,6 +55,22 @@ const createHttpClient = (): AxiosInstance => {
   instance.interceptors.response.use(
     response => {
       console.log(`✅ ${response.status} ${response.config.url}`);
+
+      // 检查业务状态码
+      const responseData = response.data;
+      if (responseData && typeof responseData === 'object' && 'code' in responseData) {
+        if (responseData.code !== 100) {
+          // 业务状态码不是100，当作失败处理
+          console.error(`❌ 业务状态码错误: ${responseData.code} - ${responseData.message}`);
+          const resourceError = createError(
+            responseData.code,
+            responseData.message || '业务处理失败',
+            new Error(responseData.message || '业务处理失败')
+          );
+          return Promise.reject(resourceError);
+        }
+      }
+
       return response;
     },
     error => {
@@ -72,15 +88,14 @@ const createHttpClient = (): AxiosInstance => {
       // 使用简化的异常处理器
       const appError = ErrorHandler.handleError(error);
 
-      // 创建统一的错误对象
-      const businessError: AppError & Error = {
-        name: 'BusinessError',
-        message: appError.message,
-        type: appError.type,
-        code: appError.code || error.code || error.response?.status || -1,
-      };
+      // 创建 Resource Error 对象
+      const resourceError = createError(
+        appError.code || error.code || error.response?.status || -1,
+        appError.message,
+        error
+      );
 
-      return Promise.reject(businessError);
+      return Promise.reject(resourceError);
     },
   );
 
@@ -92,17 +107,77 @@ export const http = createHttpClient();
 
 // 通用请求方法
 export const request = {
-  get: <T>(url: string, config?: AxiosRequestConfig) =>
-    http.get<ApiResponse<T>>(url, config).then(res => res.data),
+  get: async <T>(url: string, config?: AxiosRequestConfig): Promise<Resource<T>> => {
+    try {
+      const response = await http.get<ApiResponse<T>>(url, config);
+      return createSuccess(response.data.data);
+    } catch (error) {
+      // 拦截器已经返回 ResourceError，直接返回
+      if (error instanceof ResourceError) {
+        return error;
+      }
+      // 兜底处理
+      return createError(
+        (error as any).code || -1,
+        (error as any).message || '请求失败',
+        error as Error
+      );
+    }
+  },
 
-  post: <T>(url: string, data?: any, config?: AxiosRequestConfig) =>
-    http.post<ApiResponse<T>>(url, data, config).then(res => res.data),
+  post: async <T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<Resource<T>> => {
+    try {
+      const response = await http.post<ApiResponse<T>>(url, data, config);
+      return createSuccess(response.data.data);
+    } catch (error) {
+      // 拦截器已经返回 ResourceError，直接返回
+      if (error instanceof ResourceError) {
+        return error;
+      }
+      // 兜底处理
+      return createError(
+        (error as any).code || -1,
+        (error as any).message || '请求失败',
+        error as Error
+      );
+    }
+  },
 
-  put: <T>(url: string, data?: any, config?: AxiosRequestConfig) =>
-    http.put<ApiResponse<T>>(url, data, config).then(res => res.data),
+  put: async <T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<Resource<T>> => {
+    try {
+      const response = await http.put<ApiResponse<T>>(url, data, config);
+      return createSuccess(response.data.data);
+    } catch (error) {
+      // 拦截器已经返回 ResourceError，直接返回
+      if (error instanceof ResourceError) {
+        return error;
+      }
+      // 兜底处理
+      return createError(
+        (error as any).code || -1,
+        (error as any).message || '请求失败',
+        error as Error
+      );
+    }
+  },
 
-  delete: <T>(url: string, config?: AxiosRequestConfig) =>
-    http.delete<ApiResponse<T>>(url, config).then(res => res.data),
+  delete: async <T>(url: string, config?: AxiosRequestConfig): Promise<Resource<T>> => {
+    try {
+      const response = await http.delete<ApiResponse<T>>(url, config);
+      return createSuccess(response.data.data);
+    } catch (error) {
+      // 拦截器已经返回 ResourceError，直接返回
+      if (error instanceof ResourceError) {
+        return error;
+      }
+      // 兜底处理
+      return createError(
+        (error as any).code || -1,
+        (error as any).message || '请求失败',
+        error as Error
+      );
+    }
+  },
 };
 
 export default http;

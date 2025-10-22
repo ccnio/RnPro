@@ -1,5 +1,5 @@
 // src/utils/errorHandler.ts
-import { ErrorType, AppError } from '@/types/error';
+import { ErrorType } from '@/types/error';
 
 // 简化的异常检测器
 export class ErrorDetector {
@@ -59,7 +59,7 @@ export class ErrorHandler {
   /**
    * 处理异常并返回处理结果
    */
-  static handleError(error: any): AppError {
+  static handleError(error: any): { type: ErrorType; message: string; code?: number } {
     const errorType = ErrorDetector.detectErrorType(error);
     const userMessage = ErrorDetector.getUserFriendlyMessage(errorType, error.message);
 

@@ -17,6 +17,7 @@ interface UseApiDataOptions<T> {
   gcTime?: number;
   retry?: number;
   retryDelay?: (attemptIndex: number) => number;
+  enabled?: boolean;
 }
 
 interface UseApiDataReturn<T> {
@@ -34,6 +35,7 @@ export const useApiData = <T>({
   gcTime,
   retry,
   retryDelay,
+  enabled,
 }: UseApiDataOptions<T>): UseApiDataReturn<T> => {
   const { data, loading, error, errorType, refetch } = useDataLoader({
     queryKey,
@@ -42,6 +44,7 @@ export const useApiData = <T>({
     gcTime,
     retry,
     retryDelay,
+    enabled,
   });
 
   return {

@@ -1,5 +1,6 @@
 // src/services/feed.ts
-import { request, ApiResponse } from './http';
+import { request } from './http';
+import { Resource, isSuccess, isError } from '@/types/resource';
 
 // Feed 数据类型
 export interface FeedItem {
@@ -26,27 +27,21 @@ export interface FeedListParams {
 export const feedApi = {
   // 获取 Feed 列表
   getList: async (params?: FeedListParams): Promise<FeedResponse> => {
-    try {
-      const response: ApiResponse<FeedResponse> = await request.get<FeedResponse>('/feed', {
-        params:{
-          page: params?.page || 1,
-        }
-      });
-
-      console.log('Feed API 响应:', response);
-
-      // 检查响应码
-      if (response.code === 100) {
-        console.log('Feed API 成功，返回数据:', response.data);
-        return response.data;
-      } else {
-        console.warn('Feed API 响应码错误:', response.code, response.message);
-        throw new Error(response.message || '获取 Feed 失败');
+    const resource = await request.get<FeedResponse>('/feed', {
+      params:{
+        page: params?.page || 1,
       }
-    } catch (error) {
-      console.warn('获取 Feed 失败，使用默认数据:', error);
+    });
+
+    if (isSuccess(resource)) {
+      console.log('Feed API 成功，返回数据:', resource.data);
+      return resource.data;
+    } else if (isError(resource)) {
+      console.warn('获取 Feed 失败，使用默认数据:', resource.errorMsg);
       return getDefaultFeedResponse();
     }
+    
+    return getDefaultFeedResponse();
   },
 };
 

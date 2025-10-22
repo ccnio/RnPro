@@ -1,5 +1,6 @@
 // src/services/guess.ts
 import {request} from './http';
+import { Resource, isSuccess, isError } from '@/types/resource';
 
 // GuessItem 数据类型
 export interface GuessItem {
@@ -18,16 +19,19 @@ export interface GuessListParams {
 export const guessApi = {
   // 获取猜你喜欢列表
   getList: async (params?: GuessListParams): Promise<GuessItem[]> => {
-    try {
-      const response = await request.post<GuessItem[]>('/guess', {
-        type: params?.type || 'home', // 默认类型为 home
-        timestamp: params?.timestamp || 0, // 默认时间戳为 0
-      });
-      return response.data;
-    } catch (error) {
-      console.warn('获取猜你喜欢失败，使用默认数据:', error);
+    const resource = await request.post<GuessItem[]>('/guess', {
+      type: params?.type || 'home', // 默认类型为 home
+      timestamp: params?.timestamp || 0, // 默认时间戳为 0
+    });
+
+    if (isSuccess(resource)) {
+      return resource.data;
+    } else if (isError(resource)) {
+      console.warn('获取猜你喜欢失败，使用默认数据:', resource.errorMsg);
       return getDefaultGuessItems();
     }
+    
+    return getDefaultGuessItems();
   },
 };
 

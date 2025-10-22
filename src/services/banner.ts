@@ -1,5 +1,6 @@
 // src/services/banner.ts
 import { request } from './http';
+import { isSuccess, isError } from '@/types/resource';
 
 // Banner 数据类型
 export interface Banner {
@@ -20,19 +21,21 @@ export interface BannerListParams {
 export const bannerApi = {
   // 获取轮播图列表
   getList: async (params?: BannerListParams): Promise<Banner[]> => {
-    try {
-      const response = await request.get<Banner[]>('/banner', {
-        params: {
-          type: params?.type || 'home', // 默认类型为 home
-        },
-      });
+    const resource = await request.get<Banner[]>('/banner', {
+      params: {
+        type: params?.type || 'home', // 默认类型为 home
+      },
+    });
 
+    if (isSuccess(resource)) {
       // 只返回激活状态的轮播图
-      return response.data.filter(banner => banner.status === 'active');
-    } catch (error) {
-      console.warn('获取轮播图失败，使用默认数据:', error);
+      return resource.data.filter(banner => banner.status === 'active');
+    } else if (isError(resource)) {
+      console.warn('获取轮播图失败，使用默认数据:', resource.errorMsg);
       return getDefaultBanners();
     }
+
+    return getDefaultBanners();
   },
 };
 

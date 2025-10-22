@@ -1,6 +1,5 @@
 // src/hooks/useDataLoader.ts
 import { useQuery } from '@tanstack/react-query';
-import { AppError } from '@/types/error';
 import { ErrorType } from '@/types/error';
 
 interface UseDataLoaderOptions<T> {
@@ -10,6 +9,7 @@ interface UseDataLoaderOptions<T> {
   gcTime?: number;
   retry?: number;
   retryDelay?: (attemptIndex: number) => number;
+  enabled?: boolean;
 }
 
 interface UseDataLoaderReturn<T> {
@@ -27,6 +27,7 @@ export const useDataLoader = <T>({
   gcTime = 10 * 60 * 1000,
   retry = 3,
   retryDelay = (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+  enabled = true,
 }: UseDataLoaderOptions<T>): UseDataLoaderReturn<T> => {
   const {
     data,
@@ -40,12 +41,12 @@ export const useDataLoader = <T>({
     gcTime,
     retry,
     retryDelay,
+    enabled,
   });
 
   // 处理错误信息
-  const appError = error as AppError & Error;
-  const errorMessage = appError?.message || '数据加载失败';
-  const errorType = appError?.type || ErrorType.OTHER;
+  const errorMessage = error instanceof Error ? error.message : '数据加载失败';
+  const errorType = (error as any)?.type || ErrorType.OTHER;
 
   return {
     data,

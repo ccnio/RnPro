@@ -2,7 +2,7 @@
 import { useState, useCallback } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { feedApi, FeedItem, FeedListParams } from '@/services/feed';
-import { AppError, ErrorType } from '@/types/error';
+import { ErrorType } from '@/types/error';
 
 interface UseFeedReturn {
   feedItems: FeedItem[];
@@ -44,9 +44,8 @@ export const useFeed = (params?: FeedListParams): UseFeedReturn => {
   });
 
   // 处理错误信息
-  const appError = error as AppError & Error;
-  const errorMessage = appError?.message || '获取 Feed 失败';
-  const errorType = appError?.type || ErrorType.OTHER;
+  const errorMessage = error instanceof Error ? error.message : '获取 Feed 失败';
+  const errorType = (error as any)?.type || ErrorType.OTHER;
 
   // 合并所有页面的数据
   const feedItems = data?.pages.flatMap(page => page.content) || [];

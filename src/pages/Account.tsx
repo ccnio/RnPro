@@ -13,11 +13,24 @@ import {NavigationProp} from '@react-navigation/core';
 import {RootStackParamList} from '@/navigator';
 import IconFont from '@/assets/iconfont';
 import {useUserStore} from '@/stores/userStore';
+import {useUserStats} from '@/hooks/useUserStats';
 
 const Account = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const {user, isLoggedIn, isLoading, logout} = useUserStore();
+  const {userStats, shouldShowStats, loading: statsLoading, error: statsError} = useUserStats();
+
+  // 调试信息
+  console.log('Account页面状态:', {
+    isLoggedIn,
+    isLoading,
+    user: user?.username,
+    userStats,
+    shouldShowStats,
+    statsLoading,
+    statsError,
+  });
 
   const handleLogin = () => {
     navigation.navigate('Login');
@@ -59,6 +72,30 @@ const Account = () => {
     </View>
   );
 
+  // 统计数据展示组件
+  const renderStatsSection = () => {
+    if (!shouldShowStats || !userStats) return null;
+
+    return (
+      <View style={styles.statsContainer}>
+        {/* 喜欢数 */}
+        <View style={styles.statItem}>
+          <Text style={styles.statNumber}>{userStats.favorNum}</Text>
+          <Text style={styles.statLabel}>喜欢数</Text>
+        </View>
+
+        {/* 分割线 */}
+        <View style={styles.statDivider} />
+
+        {/* 帖子数 */}
+        <View style={styles.statItem}>
+          <Text style={styles.statNumber}>{userStats.postNum}</Text>
+          <Text style={styles.statLabel}>帖子数</Text>
+        </View>
+      </View>
+    );
+  };
+
   // 已登录界面
   const renderLoggedIn = () => (
     <View style={styles.container}>
@@ -74,6 +111,9 @@ const Account = () => {
 
         {/* 用户名 */}
         <Text style={styles.username}>{user?.username}</Text>
+
+        {/* 统计数据区域 */}
+        {renderStatsSection()}
 
         {/* 退出登录按钮 */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
@@ -168,7 +208,44 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     color: '#333',
-    marginBottom: 32,
+    marginBottom: 24,
+  },
+  // 统计数据样式
+  statsContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    paddingVertical: 20,
+    paddingHorizontal: 32,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  statItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  statNumber: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#f86442',
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 14,
+    color: '#666',
+    fontWeight: '500',
+  },
+  statDivider: {
+    width: 1,
+    backgroundColor: '#e0e0e0',
+    marginHorizontal: 16,
   },
   logoutButton: {
     backgroundColor: '#fff',
