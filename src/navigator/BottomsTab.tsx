@@ -4,6 +4,8 @@ import Account from '@/pages/Account.tsx';
 import IconFont from '@/assets/iconfont';
 import HomeTabs from '@/navigator/HomeTabs.tsx';
 import Case from '@/pages/Ui.tsx';
+import {useLanguage} from '@/hooks/useLanguage';
+import {useMemo} from 'react';
 
 export type BottomTabParamList = {
   Home: undefined;
@@ -27,31 +29,55 @@ const AccountIcon = ({color, size}: {color: string; size: number}) => (
   <IconFont name="icon-user" size={size} color={color} />
 );
 const BottomsTab = () => {
+  const {t, currentLocale} = useLanguage();
+  
+  // 使用 useMemo 确保当语言变化时重新计算选项
+  const screenOptions = useMemo(() => ({
+    headerShown: false,
+    tabBarActiveTintColor: '#f86442',
+  }), []);
+
+  const homeOptions = useMemo(() => ({
+    tabBarLabel: t('navigation.home'),
+    tabBarIcon: HomeIcon
+  }), [t, currentLocale]);
+
+  const caseOptions = useMemo(() => ({
+    tabBarLabel: t('navigation.case'),
+    tabBarIcon: ListenIcon
+  }), [t, currentLocale]);
+
+  const foundOptions = useMemo(() => ({
+    tabBarLabel: t('navigation.search'),
+    tabBarIcon: FoundIcon
+  }), [t, currentLocale]);
+
+  const accountOptions = useMemo(() => ({
+    tabBarLabel: t('navigation.profile'),
+    tabBarIcon: AccountIcon
+  }), [t, currentLocale]);
+  
   return (
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: '#f86442',
-      }}>
+    <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen
         name="HomeTabs"
         component={HomeTabs}
-        options={{tabBarLabel: '首页', tabBarIcon: HomeIcon}}
+        options={homeOptions}
       />
       <Tab.Screen
         name="Case"
         component={Case}
-        options={{tabBarLabel: 'Case', tabBarIcon: ListenIcon}}
+        options={caseOptions}
       />
       <Tab.Screen
         name="Found"
         component={Found}
-        options={{tabBarLabel: '发现', tabBarIcon: FoundIcon}}
+        options={foundOptions}
       />
       <Tab.Screen
         name="Account"
         component={Account}
-        options={{tabBarLabel: '我的', tabBarIcon: AccountIcon}}
+        options={accountOptions}
       />
     </Tab.Navigator>
   );

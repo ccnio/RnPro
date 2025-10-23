@@ -11,6 +11,7 @@ import {
   Keyboard,
 } from 'react-native';
 import IconFont from '@/assets/iconfont';
+import {useLanguage} from '@/hooks/useLanguage';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -30,22 +31,26 @@ interface SearchBarProps {
 export const SearchBar: React.FC<SearchBarProps> = ({
   onSearch,
   onHistoryItemPress,
-  placeholder = '搜索内容',
+  placeholder,
   maxHistoryItems = 5,
 }) => {
+  const {t} = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([]);
   const inputRef = useRef<TextInput>(null);
 
+  // 使用传入的placeholder或默认翻译
+  const finalPlaceholder = placeholder || t('searchBar.placeholder');
+
   // 模拟搜索历史数据（实际项目中应该从本地存储或API获取）
   useEffect(() => {
     const mockHistory: SearchHistoryItem[] = [
-      { id: '1', text: '音乐推荐', timestamp: Date.now() - 86400000 },
-      { id: '2', text: '播客节目', timestamp: Date.now() - 172800000 },
-      { id: '3', text: '有声书', timestamp: Date.now() - 259200000 },
-      { id: '4', text: '儿童故事', timestamp: Date.now() - 345600000 },
-      { id: '5', text: '教育课程', timestamp: Date.now() - 432000000 },
+      { id: '1', text: t('searchBar.defaultHistory.music'), timestamp: Date.now() - 86400000 },
+      { id: '2', text: t('searchBar.defaultHistory.podcast'), timestamp: Date.now() - 172800000 },
+      { id: '3', text: t('searchBar.defaultHistory.audiobook'), timestamp: Date.now() - 259200000 },
+      { id: '4', text: t('searchBar.defaultHistory.children'), timestamp: Date.now() - 345600000 },
+      { id: '5', text: t('searchBar.defaultHistory.education'), timestamp: Date.now() - 432000000 },
     ];
     setSearchHistory(mockHistory);
   }, []);
@@ -117,7 +122,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         <TextInput
           ref={inputRef}
           style={styles.searchInput}
-          placeholder={placeholder}
+          placeholder={finalPlaceholder}
           placeholderTextColor="#999"
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -139,11 +144,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       {isFocused && searchHistory.length > 0 && (
         <View style={styles.historyContainer}>
           <View style={styles.historyHeader}>
-            <Text style={styles.historyTitle}>搜索历史</Text>
+            <Text style={styles.historyTitle}>{t('searchBar.searchHistory')}</Text>
             <TouchableOpacity
               onPress={handleClearHistory}
               activeOpacity={0.7}>
-              <Text style={styles.clearButton}>清空</Text>
+              <Text style={styles.clearButton}>{t('searchBar.clearHistory')}</Text>
             </TouchableOpacity>
           </View>
           <ScrollView

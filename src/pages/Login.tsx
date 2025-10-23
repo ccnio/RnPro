@@ -15,6 +15,7 @@ import IconFont from '@/assets/iconfont';
 import {useUserStore} from '@/stores/userStore';
 import {useAccountSearch} from '@/hooks/useAccountSearch';
 import {realmManager} from '@/database/RealmManager';
+import {useLanguage} from '@/hooks/useLanguage';
 
 // 定义表单数据类型
 interface LoginFormData {
@@ -32,6 +33,7 @@ const Login = () => {
   const [loginType, setLoginType] = useState<LoginType>('username');
   const [showSearchResults, setShowSearchResults] = useState(false);
   const {searchResults, isSearching, searchAccounts, saveAccount, clearSearchResults} = useAccountSearch();
+  const {t} = useLanguage();
 
   // 初始化 Realm 数据库
   useEffect(() => {
@@ -80,16 +82,16 @@ const Login = () => {
       // 直接通过 login 方法保存到数据库
       login(userInfo, token);
 
-      Alert.alert('登录成功', `欢迎回来，${userInfo.username}！`, [
+      Alert.alert(t('login.loginSuccess'), `欢迎回来，${userInfo.username}！`, [
         {
-          text: '确定',
+          text: t('common.confirm'),
           onPress: () => {
             navigation.goBack();
           },
         },
       ]);
     } catch (error) {
-      Alert.alert('登录失败', '用户名或密码错误，请重试');
+      Alert.alert(t('login.loginFailed'), t('login.invalidCredentials'));
     }
   };
 
@@ -132,7 +134,7 @@ const Login = () => {
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
           <IconFont name="icon-back" size={24} color="#333" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>登录</Text>
+        <Text style={styles.headerTitle}>{t('login.title')}</Text>
         <View style={styles.placeholder} />
       </View>
 
@@ -156,7 +158,7 @@ const Login = () => {
                 styles.loginTypeText,
                 loginType === 'username' && styles.loginTypeTextActive,
               ]}>
-              用户名登录
+              {t('login.loginTypeUsername')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -170,7 +172,7 @@ const Login = () => {
                 styles.loginTypeText,
                 loginType === 'email' && styles.loginTypeTextActive,
               ]}>
-              邮箱登录
+              {t('login.loginTypeEmail')}
             </Text>
           </TouchableOpacity>
         </View>

@@ -12,6 +12,7 @@ import Navigator from '@/navigator/index';
 import {QueryProvider} from '@/providers/QueryProvider';
 import {MyCategoriesProvider} from '@/hooks/useMyCategoriesContext';
 import {useUserInitialization} from '@/hooks/useUserInitialization';
+import '@/i18n'; // 初始化国际化
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
