@@ -13,6 +13,7 @@ import com.rnpro.NativeRouterModuleSpec;
 
 public class RnRouterModuleJava extends NativeRouterModuleSpec {
     private static final String TAG = "RnRouterModuleJava";
+
     public RnRouterModuleJava(ReactApplicationContext reactContext) {
         super(reactContext);
     }
@@ -25,6 +26,7 @@ public class RnRouterModuleJava extends NativeRouterModuleSpec {
     @Override
     public void hasPage(ReadableMap pathInfo, Promise promise) {
         // {"user":{"email":"cc@gmail.com","name":"cc"},"path":"setting"}
+        // 这里是在子线程，但不是 js 线程
         Log.d(TAG, "hasPage: " + pathInfo);
         WritableMap map = Arguments.createMap();
         map.putBoolean("exists", true);

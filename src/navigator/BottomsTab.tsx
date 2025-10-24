@@ -3,7 +3,7 @@ import Found from '@/pages/Found.tsx';
 import Account from '@/pages/Account.tsx';
 import IconFont from '@/assets/iconfont';
 import HomeTabs from '@/navigator/HomeTabs.tsx';
-import Case from '@/pages/Ui.tsx';
+import Case from '@/pages/Case';
 import {useLanguage} from '@/hooks/useLanguage';
 import {useMemo} from 'react';
 
@@ -30,7 +30,7 @@ const AccountIcon = ({color, size}: {color: string; size: number}) => (
 );
 const BottomsTab = () => {
   const {t, currentLocale} = useLanguage();
-  
+
   // 使用 useMemo 确保当语言变化时重新计算选项
   const screenOptions = useMemo(() => ({
     headerShown: false,
@@ -56,7 +56,7 @@ const BottomsTab = () => {
     tabBarLabel: t('navigation.profile'),
     tabBarIcon: AccountIcon
   }), [t, currentLocale]);
-  
+
   return (
     <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen

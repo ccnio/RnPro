@@ -2,7 +2,13 @@
 import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
 import {appConfig} from '@/config/app';
 import {ErrorHandler} from '@/utils/errorHandler';
-import {Resource, Success, ResourceError, createSuccess, createError} from '@/types/resource';
+import {
+  createError,
+  createSuccess,
+  isError,
+  Resource,
+  ResourceError,
+} from '@/types/resource';
 
 // 响应数据接口
 export interface ApiResponse<T = any> {
@@ -65,7 +71,7 @@ const createHttpClient = (): AxiosInstance => {
           const resourceError = createError(
             responseData.code,
             responseData.message || '业务处理失败',
-            new Error(responseData.message || '业务处理失败')
+            new Error(responseData.message || '业务处理失败'),
           );
           return Promise.reject(resourceError);
         }
@@ -92,7 +98,7 @@ const createHttpClient = (): AxiosInstance => {
       const resourceError = createError(
         appError.code || error.code || error.response?.status || -1,
         appError.message,
-        error
+        error,
       );
 
       return Promise.reject(resourceError);
@@ -113,14 +119,14 @@ export const request = {
       return createSuccess(response.data.data);
     } catch (error) {
       // 拦截器已经返回 ResourceError，直接返回
-      if (error instanceof ResourceError) {
-        return error;
+      if (isError(error as Resource<any>)) {
+        return error as ResourceError;
       }
       // 兜底处理
       return createError(
         (error as any).code || -1,
         (error as any).message || '请求失败',
-        error as Error
+        error as Error,
       );
     }
   },
@@ -131,14 +137,14 @@ export const request = {
       return createSuccess(response.data.data);
     } catch (error) {
       // 拦截器已经返回 ResourceError，直接返回
-      if (error instanceof ResourceError) {
-        return error;
+      if (isError(error as Resource<any>)) {
+        return error as ResourceError;
       }
       // 兜底处理
       return createError(
         (error as any).code || -1,
         (error as any).message || '请求失败',
-        error as Error
+        error as Error,
       );
     }
   },
@@ -149,14 +155,14 @@ export const request = {
       return createSuccess(response.data.data);
     } catch (error) {
       // 拦截器已经返回 ResourceError，直接返回
-      if (error instanceof ResourceError) {
-        return error;
+      if (isError(error as Resource<any>)) {
+        return error as ResourceError;
       }
       // 兜底处理
       return createError(
         (error as any).code || -1,
         (error as any).message || '请求失败',
-        error as Error
+        error as Error,
       );
     }
   },
@@ -167,14 +173,14 @@ export const request = {
       return createSuccess(response.data.data);
     } catch (error) {
       // 拦截器已经返回 ResourceError，直接返回
-      if (error instanceof ResourceError) {
-        return error;
+      if (isError(error as Resource<any>)) {
+        return error as ResourceError;
       }
       // 兜底处理
       return createError(
         (error as any).code || -1,
         (error as any).message || '请求失败',
-        error as Error
+        error as Error,
       );
     }
   },
