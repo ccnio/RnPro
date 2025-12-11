@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Alert,
   Image,
@@ -18,6 +18,8 @@ import {useAdvertisement} from '@/hooks/useAdvertisement';
 import {useLanguage} from '@/hooks/useLanguage';
 import {useLanguageDetection} from '@/hooks/useLanguageDetection';
 import {openNativeSettings} from '@/utils/NativeNavigation';
+import ConfirmDialog from '@/components/ConfirmDialog';
+import GlobalLoading from '@/components/GlobalLoading';
 
 const Account = () => {
   const insets = useSafeAreaInsets();
@@ -42,6 +44,8 @@ const Account = () => {
     followSystemLanguage,
     isFollowingSystem,
   } = useLanguage();
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // 检测从原生界面返回时的语言变化
   useLanguageDetection();
@@ -66,17 +70,39 @@ const Account = () => {
   };
 
   const handleLogout = () => {
-    Alert.alert(t('account.logoutConfirm'), t('account.logoutMessage'), [
-      {
-        text: t('account.cancel'),
-        style: 'cancel',
-      },
-      {
-        text: t('account.confirm'),
-        style: 'destructive',
-        onPress: logout,
-      },
-    ]);
+    setShowLogoutDialog(true);
+  };
+
+  const handleLogoutConfirm = async () => {
+    setShowLogoutDialog(false);
+    setIsLoggingOut(true);
+    try {
+      // 等待一小段时间以确保 UI 更新
+      await new Promise<void>((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, 100);
+      });
+      // 延迟 2 秒以便查看 loading 效果
+      await new Promise<void>((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, 2000);
+      });
+      logout();
+      // 等待 logout 完成后再隐藏 loading
+      await new Promise<void>((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, 300);
+      });
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
+  const handleLogoutCancel = () => {
+    setShowLogoutDialog(false);
   };
 
   const handleLanguageChange = () => {
@@ -236,6 +262,16 @@ const Account = () => {
         : isLoggedIn
         ? renderLoggedIn()
         : renderNotLoggedIn()}
+      <ConfirmDialog
+        visible={showLogoutDialog}
+        title={t('account.logoutConfirm')}
+        message={t('account.logoutMessage')}
+        cancelText={t('account.cancel')}
+        confirmText={t('account.confirm')}
+        onCancel={handleLogoutCancel}
+        onConfirm={handleLogoutConfirm}
+      />
+      <GlobalLoading visible={isLoggingOut} message={t('account.logout')} />
     </View>
   );
 };
