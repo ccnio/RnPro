@@ -4,23 +4,28 @@ import Category from '@/pages/Category.tsx';
 import Login from '@/pages/Login.tsx';
 import {createStackNavigator} from '@react-navigation/stack';
 import BottomsTab from '@/navigator/BottomsTab.tsx';
+import Widget from '@/pages/case/ui/Widget.tsx';
 
 // 定义导航参数类型
 export type RootStackParamList = {
   Detail: {id: string; name: string};
   Category: undefined;
   Login: undefined;
+  Widget: undefined;
 };
 
 const StackNavigator = createStackNavigator();
 const Navigator = () => {
   return (
     <NavigationContainer>
-      <StackNavigator.Navigator screenOptions={{headerShown: false}} initialRouteName={'BottomsTab'}>
+      <StackNavigator.Navigator
+        screenOptions={{headerShown: false}}
+        initialRouteName={'BottomsTab'}>
         <StackNavigator.Screen name="BottomsTab" component={BottomsTab} />
         <StackNavigator.Screen name="Detail" component={Detail} />
         <StackNavigator.Screen name="Category" component={Category} />
         <StackNavigator.Screen name="Login" component={Login} />
+        <StackNavigator.Screen name="Widget" component={Widget} />
       </StackNavigator.Navigator>
     </NavigationContainer>
   );

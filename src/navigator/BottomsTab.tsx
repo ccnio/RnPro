@@ -3,7 +3,7 @@ import Found from '@/pages/Found.tsx';
 import Account from '@/pages/Account.tsx';
 import IconFont from '@/assets/iconfont';
 import HomeTabs from '@/navigator/HomeTabs.tsx';
-import Case from '@/pages/Case';
+import Case from '@/pages/case/Case.tsx';
 import {useLanguage} from '@/hooks/useLanguage';
 import {useMemo} from 'react';
 

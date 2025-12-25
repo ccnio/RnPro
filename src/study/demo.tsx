@@ -48,6 +48,7 @@ export const CaseBtn = ({
   return (
     <TouchableOpacity
       onPress={onPress}
+      activeOpacity={0.7}
       style={{
         backgroundColor: '#2d8ddd',
         paddingVertical: 2,
